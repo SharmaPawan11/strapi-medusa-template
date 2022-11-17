@@ -33,26 +33,34 @@
       "type": "json"
     },
     "fulfillment_providers": {
-      "via": "regions",
-      "collection": "fulfillment-provider",
-      "dominant": true
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::fulfillment-provider.fulfillment-provider",
+      "mappedBy": "regions"
     },
     "payment_providers": {
-      "via": "regions",
-      "collection": "payment-provider",
-      "dominant": true
-    },
-    "currency": {
-      "model": "currency",
-      "via": "regions"
-    },
-    "countries": {
-      "via": "region",
-      "collection": "country"
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::payment-provider.payment-provider",
+      "mappedBy": "regions"
     },
     "shipping_options": {
-      "via": "region",
-      "collection": "shipping-option"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::shipping-option.shipping-option",
+      "mappedBy": "region"
+    },
+    "countries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::country.country",
+      "mappedBy": "region"
+    },
+    "currency": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::currency.currency",
+      "inversedBy": "regions"
     }
   }
 }

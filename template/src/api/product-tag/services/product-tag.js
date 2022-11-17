@@ -5,9 +5,9 @@
  * to customize this service
  */
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const {createCoreService} = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::product-tag.product-tag', ({ strapi }) => ({
+module.exports = createCoreService('api::product-tag.product-tag', ({strapi}) => ({
   async handleManyToManyRelation(product_tags) {
     const strapiProductTagsIds = [];
 
@@ -17,16 +17,18 @@ module.exports = createCoreService('api::product-tag.product-tag', ({ strapi }) 
         delete product_tag.id;
 
         const found = await strapi.db.query('api::product-tag.product-tag').findOne({
-          medusa_id: product_tag.medusa_id
+          where: {
+            medusa_id: product_tag.medusa_id
+          }
         })
 
         if (found) {
-          strapiProductTagsIds.push({ id: found.id });
+          strapiProductTagsIds.push(found.id);
           continue;
         }
 
-        const create = await strapi.entityService.create('api::product-tag.product-tag', { data: product_tag });
-        strapiProductTagsIds.push({ id: create.id });
+        const create = await strapi.entityService.create('api::product-tag.product-tag', {data: product_tag});
+        strapiProductTagsIds.push(create.id);
       }
     } catch (e) {
       console.log(e);

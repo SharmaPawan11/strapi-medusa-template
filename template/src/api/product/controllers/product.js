@@ -4,15 +4,15 @@
  *  product controller
  */
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const {createCoreController} = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::product.product', {
   async findOne(ctx) {
     try {
-      const { productId } = ctx.params
+      const {productId} = ctx.params
       const product = await strapi
         .query("product", "")
-        .findOne({ product_id: productId })
+        .findOne({product_id: productId})
       if (product && product.id) {
         return ctx.body = {
           product
@@ -31,7 +31,7 @@ module.exports = createCoreController('api::product.product', {
         productBody
       )
       if (create) {
-        return ctx.body = { id: create };
+        return ctx.body = {id: create};
       }
       return ctx.badRequest(ctx)
     } catch (e) {
@@ -40,22 +40,24 @@ module.exports = createCoreController('api::product.product', {
   },
   async update(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {id} = ctx.params
       const productBody = ctx.request.body
 
       productBody.product_length = productBody.length
       delete productBody.length
 
       const found = await strapi.db.query('api::product.product').findOne({
-        medusa_id: medusaId,
+        where: {
+          medusa_id: id,
+        }
       })
 
       if (found) {
-        const update = await strapi.db.query('api::product.product').updateWithRelations(
+        const update = await strapi.service('api::product.product').updateWithRelations(
           productBody
         )
         if (update) {
-          return ctx.body = { id: update }
+          return ctx.body = {id: update}
         } else {
           return ctx.internalServerError(ctx, "ERROR")
         }
@@ -65,28 +67,29 @@ module.exports = createCoreController('api::product.product', {
         productBody
       )
       if (create) {
-        return ctx.body = { id: create }
+        return ctx.body = {id: create}
       }
 
       return ctx.notFound(ctx)
     } catch (e) {
+      console.error(e)
       return ctx.internalServerError(ctx, e)
     }
   },
   async delete(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {id} = ctx.params
       const product = await strapi
         .query("product", "")
-        .findOne({ medusa_id: medusaId })
+        .findOne({medusa_id: id})
       if (product) {
         if (product.product_variants && product.product_variants.length) {
           await strapi
             .query("product-variant", "")
-            .delete({ product: product.id })
+            .delete({product: product.id})
         }
         await strapi.query("product", "").delete({
-          medusa_id: medusaId,
+          medusa_id: id,
         })
         return ctx.body = {
           id: product.id

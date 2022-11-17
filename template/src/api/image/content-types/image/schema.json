@@ -26,8 +26,10 @@
       "type": "json"
     },
     "products": {
-      "via": "images",
-      "collection": "product"
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product",
+      "inversedBy": "images"
     }
   }
 }

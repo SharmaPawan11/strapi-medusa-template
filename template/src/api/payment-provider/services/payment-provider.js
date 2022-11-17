@@ -5,9 +5,9 @@
  * to customize this service
  */
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const {createCoreService} = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::payment-provider.payment-provider', ({ strapi }) => ({
+module.exports = createCoreService('api::payment-provider.payment-provider', ({strapi}) => ({
   async bootstrap(data) {
     strapi.log.debug('Syncing Payment Providers....');
     try {
@@ -18,12 +18,16 @@ module.exports = createCoreService('api::payment-provider.payment-provider', ({ 
             delete paymentProvider.id
           }
 
-          const found = await strapi.db.query('api::payment-provider.payment-provider').findOne({ medusa_id: paymentProvider.medusa_id });
+          const found = await strapi.db.query('api::payment-provider.payment-provider').findOne({
+            where: {
+              medusa_id: paymentProvider.medusa_id
+            }
+          });
           if (found) {
             continue
           }
 
-          const create = await strapi.entityService.create('api::payment-provider.payment-provider', { data: paymentProvider });
+          const create = await strapi.entityService.create('api::payment-provider.payment-provider', {data: paymentProvider});
         }
       }
       strapi.log.info('Payment Providers synced');
@@ -43,16 +47,18 @@ module.exports = createCoreService('api::payment-provider.payment-provider', ({ 
         delete paymentProvider.id;
 
         const found = await strapi.db.query('api::payment-provider.payment-provider').findOne({
-          medusa_id: paymentProvider.medusa_id
+          where: {
+            medusa_id: paymentProvider.medusa_id
+          }
         })
 
         if (found) {
-          strapiPaymentProvidersIds.push({ id: found.id });
+          strapiPaymentProvidersIds.push(found.id);
           continue;
         }
 
-        const create = await strapi.entityService.create('api::payment-provider.payment-provider', { data: paymentProvider });
-        strapiPaymentProvidersIds.push({ id: create.id });
+        const create = await strapi.entityService.create('api::payment-provider.payment-provider', {data: paymentProvider});
+        strapiPaymentProvidersIds.push(create.id);
       }
     } catch (e) {
       console.log(e);

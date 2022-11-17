@@ -31,8 +31,27 @@
       "type": "json"
     },
     "products": {
-      "via": "product_collection",
-      "collection": "product"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product",
+      "mappedBy": "product_collection"
+    },
+    "description": {
+      "type": "text"
+    },
+    "explanation_media": {
+      "allowedTypes": [
+        "videos"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "explanation_media_preview": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

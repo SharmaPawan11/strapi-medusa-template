@@ -4,17 +4,17 @@
  *  image controller
  */
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const {createCoreController} = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::region.region', {
   async findOne(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {medusaId} = ctx.params
       const region = await strapi
         .query("region", "")
-        .findOne({ region_id: medusaId })
+        .findOne({region_id: medusaId})
       if (region && region.id) {
-        return ctx.body = { region };
+        return ctx.body = {region};
       }
       return ctx.notFound(ctx)
     } catch (e) {
@@ -32,7 +32,7 @@ module.exports = createCoreController('api::region.region', {
         regionBody
       )
       if (create) {
-        return ctx.body = { id: create }
+        return ctx.body = {id: create}
       }
       return ctx.badRequest(ctx)
     } catch (e) {
@@ -41,14 +41,16 @@ module.exports = createCoreController('api::region.region', {
   },
   async update(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {medusaId} = ctx.params
       const regionBody = ctx.request.body
       Object.keys(regionBody).forEach(
         (key) => regionBody[key] === undefined && delete regionBody[key]
       )
 
       const found = await strapi.db.query('api::region.region').findOne({
-        medusa_id: medusaId,
+        where: {
+          medusa_id: medusaId,
+        }
       })
 
       if (found) {
@@ -56,7 +58,7 @@ module.exports = createCoreController('api::region.region', {
           regionBody
         )
         if (update) {
-          return ctx.body = { id: update }
+          return ctx.body = {id: update}
         }
       }
 
@@ -64,7 +66,7 @@ module.exports = createCoreController('api::region.region', {
         regionBody
       )
       if (create) {
-        return ctx.body = { id: create }
+        return ctx.body = {id: create}
       }
 
       return ctx.notFound(ctx)

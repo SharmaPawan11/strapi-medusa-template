@@ -16,19 +16,19 @@ function performCleanups(productVariantBody) {
   delete productVariantBody.length
 }
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const {createCoreController} = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::product-variant.product-variant', {
   async findOne(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {medusaId} = ctx.params
       const productVariant = await strapi
         .strapi.db.query("api::product-variant.product-variant")
-        .findOne({ 
+        .findOne({
           where: {product_variant_id: medusaId}
-         })
+        })
       if (productVariant && productVariant.id) {
-        return ctx.body = { productVariant }
+        return ctx.body = {productVariant}
       }
       return ctx.notFound(ctx)
     } catch (e) {
@@ -52,7 +52,7 @@ module.exports = createCoreController('api::product-variant.product-variant', {
 
       const create = await strapi.service('api::product-variant.product-variant').createWithRelations(productVariantBody)
       if (create) {
-        return ctx.body = { id: create }
+        return ctx.body = {id: create}
       }
       return ctx.badRequest(ctx)
     } catch (e) {
@@ -62,7 +62,7 @@ module.exports = createCoreController('api::product-variant.product-variant', {
   },
   async update(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {medusaId} = ctx.params
       const productVariantBody = ctx.request.body
 
       const product = productVariantBody.product
@@ -77,13 +77,15 @@ module.exports = createCoreController('api::product-variant.product-variant', {
       performCleanups(productVariantBody)
 
       const found = await strapi.db.query('api::product-variant.product-variant').findOne({
-        medusa_id: medusaId,
+        where: {
+          medusa_id: medusaId,
+        }
       })
 
       if (found) {
         const update = await strapi.db.query('api::product-variant.product-variant').updateWithRelations(productVariantBody)
         if (update) {
-          return ctx.body = { id: update }
+          return ctx.body = {id: update}
         } else {
           return ctx.internalServerError(ctx, "ERROR")
         }
@@ -91,7 +93,7 @@ module.exports = createCoreController('api::product-variant.product-variant', {
 
       const create = await strapi.service('api::product-variant.product-variant').createWithRelations(productVariantBody)
       if (create) {
-        return ctx.body = { id: create }
+        return ctx.body = {id: create}
       }
 
       return ctx.notFound(ctx)
@@ -101,10 +103,10 @@ module.exports = createCoreController('api::product-variant.product-variant', {
   },
   async delete(ctx) {
     try {
-      const { medusaId } = ctx.params
+      const {medusaId} = ctx.params
       const productVariant = await strapi
         .query("product-variant", "")
-        .findOne({ medusa_id: medusaId })
+        .findOne({medusa_id: medusaId})
       if (productVariant) {
         await strapi.query("product-variant", "").delete({
           medusa_id: medusaId,
