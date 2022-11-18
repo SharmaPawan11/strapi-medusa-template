@@ -35,13 +35,15 @@
       "type": "string",
       "required": true
     },
-    "region": {
-      "via": "countries",
-      "model": "region"
-    },
     "medusa_id": {
       "type": "uid",
       "required": true
+    },
+    "region": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::region.region",
+      "inversedBy": "countries"
     }
   }
 }

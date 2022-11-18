@@ -5,9 +5,9 @@
  * to customize this service
  */
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const {createCoreService} = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::shipping-option-requirement.shipping-option-requirement', ({ strapi }) => ({
+module.exports = createCoreService('api::shipping-option-requirement.shipping-option-requirement', ({strapi}) => ({
   async handleOneToManyRelation(shippingOptionRequirements) {
     const shippingOptionRequirementStrapiIds = [];
     try {
@@ -19,15 +19,17 @@ module.exports = createCoreService('api::shipping-option-requirement.shipping-op
           }
 
           const found = await strapi.db.query('api::shipping-option-requirement.shipping-option-requirement').findOne({
-            medusa_id: shippingOptionRequirement.medusa_id
+            where: {
+              medusa_id: shippingOptionRequirement.medusa_id
+            }
           });
           if (found) {
-            shippingOptionRequirementStrapiIds.push({ id: found.id });
+            shippingOptionRequirementStrapiIds.push(found.id);
             continue;
           }
 
-          const create = await strapi.entityService.create('api::shipping-option-requirement.shipping-option-requirement', { data: shippingOptionRequirement });
-          shippingOptionRequirementStrapiIds.push({ id: create.id });
+          const create = await strapi.entityService.create('api::shipping-option-requirement.shipping-option-requirement', {data: shippingOptionRequirement});
+          shippingOptionRequirementStrapiIds.push(create.id);
         }
       }
       return shippingOptionRequirementStrapiIds;

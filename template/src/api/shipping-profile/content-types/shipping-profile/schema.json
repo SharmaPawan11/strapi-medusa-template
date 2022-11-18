@@ -36,12 +36,16 @@
       "type": "json"
     },
     "shipping_options": {
-      "via": "shipping_profile",
-      "collection": "shipping-option"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::shipping-option.shipping-option",
+      "mappedBy": "shipping_profile"
     },
     "products": {
-      "via": "shipping_profile",
-      "collection": "product"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product",
+      "mappedBy": "shipping_profile"
     }
   }
 }

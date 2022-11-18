@@ -85,16 +85,22 @@
       "type": "json"
     },
     "product": {
-      "via": "product_variants",
-      "model": "product"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "product_variants"
     },
     "money_amounts": {
-      "via": "product_variant",
-      "collection": "money-amount"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::money-amount.money-amount",
+      "mappedBy": "product_variant"
     },
     "product_option_values": {
-      "via": "product_variant",
-      "collection": "product-option-value"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-option-value.product-option-value",
+      "mappedBy": "product_variant"
     }
   }
 }

@@ -5,9 +5,9 @@
  * to customize this service
  */
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const {createCoreService} = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::country.country', ({ strapi }) => ({
+module.exports = createCoreService('api::country.country', ({strapi}) => ({
   async handleOneToManyRelation(countries, parent) {
 
     const countriesStrapiIds = [];
@@ -23,15 +23,15 @@ module.exports = createCoreService('api::country.country', ({ strapi }) => ({
           }
 
           const found = await strapi.db.query('api::country.country').findOne({
-            medusa_id: country.medusa_id
+            where: {medusa_id: country.medusa_id}
           });
           if (found) {
-            countriesStrapiIds.push({ id: found.id });
+            countriesStrapiIds.push(found.id);
             continue;
           }
 
-          const create = await strapi.entityService.create('api::country.country', { data: country });
-          countriesStrapiIds.push({ id: create.id });
+          const create = await strapi.entityService.create('api::country.country', {data: country});
+          countriesStrapiIds.push(create.id);
         }
       }
       return countriesStrapiIds;

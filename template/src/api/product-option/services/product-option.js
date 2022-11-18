@@ -5,9 +5,9 @@
  * to customize this service
  */
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const {createCoreService} = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::product-option.product-option', ({ strapi }) => ({
+module.exports = createCoreService('api::product-option.product-option', ({strapi}) => ({
   async handleOneToManyRelation(product_options, forceUpdate = false) {
     const productOptionsStrapiIds = [];
     if (product_options && product_options.length) {
@@ -32,17 +32,17 @@ module.exports = createCoreService('api::product-option.product-option', ({ stra
                 }
               });
               if (update) {
-                productOptionsStrapiIds.push({ id: update.id });
+                productOptionsStrapiIds.push(update.id);
                 continue;
               }
             }
 
-            productOptionsStrapiIds.push({ id: found.id });
+            productOptionsStrapiIds.push(found.id);
             continue
           }
 
-          const create = await strapi.entityService.create('api::product-option.product-option', { data: product_option });
-          productOptionsStrapiIds.push({ id: create.id });
+          const create = await strapi.entityService.create('api::product-option.product-option', {data: product_option});
+          productOptionsStrapiIds.push(create.id);
         } catch (e) {
           console.log(e);
           throw new Error('Delegated creation failed');

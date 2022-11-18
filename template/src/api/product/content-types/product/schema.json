@@ -27,7 +27,7 @@
       "type": "string"
     },
     "description": {
-      "type": "string"
+      "type": "text"
     },
     "handle": {
       "type": "string"
@@ -84,34 +84,46 @@
       "type": "json"
     },
     "product_variants": {
-      "via": "product",
-      "collection": "product-variant"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-variant.product-variant",
+      "mappedBy": "product"
     },
     "product_options": {
-      "via": "product",
-      "collection": "product-option"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-option.product-option",
+      "mappedBy": "product"
     },
     "images": {
-      "via": "products",
-      "collection": "image",
-      "dominant": true
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::image.image",
+      "mappedBy": "products"
     },
     "shipping_profile": {
-      "via": "products",
-      "model": "shipping-profile"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::shipping-profile.shipping-profile",
+      "inversedBy": "products"
     },
     "product_collection": {
-      "via": "products",
-      "model": "product-collection"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-collection.product-collection",
+      "inversedBy": "products"
     },
     "product_type": {
-      "via": "products",
-      "model": "product-type"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-type.product-type",
+      "inversedBy": "products"
     },
     "product_tags": {
-      "via": "products",
-      "collection": "product-tag",
-      "dominant": true
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-tag.product-tag",
+      "mappedBy": "products"
     }
   }
 }

@@ -6,7 +6,13 @@
  */
 
 async function createShippingOptionAfterDelegation(shippingOption) {
-  const { region, 'profile': shipping_profile, 'requirements': shipping_option_requirements, 'provider': fulfillment_provider, ...createPayload } = shippingOption;
+  const {
+    region,
+    'profile': shipping_profile,
+    'requirements': shipping_option_requirements,
+    'provider': fulfillment_provider,
+    ...createPayload
+  } = shippingOption;
 
   if (region) {
     createPayload.region = await strapi.service('api::region.region').handleManyToOneRelation(region, 'shipping-option');
@@ -24,13 +30,13 @@ async function createShippingOptionAfterDelegation(shippingOption) {
     createPayload.fulfillment_provider = await strapi.service('api::fulfillment-provider.fulfillment-provider').handleManyToOneRelation(fulfillment_provider, 'shipping-option');
   }
 
-  const create = await strapi.entityService.create('api::shipping-option.shipping-option', { data: createPayload });
+  const create = await strapi.entityService.create('api::shipping-option.shipping-option', {data: createPayload});
   return create.id;
 }
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const {createCoreService} = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::shipping-option.shipping-option', ({ strapi }) => ({
+module.exports = createCoreService('api::shipping-option.shipping-option', ({strapi}) => ({
   async bootstrap(data) {
     strapi.log.debug('Syncing Shipping Options....');
 
@@ -42,7 +48,11 @@ module.exports = createCoreService('api::shipping-option.shipping-option', ({ st
             delete shipping_option.id
           }
 
-          const found = await strapi.db.query('api::shipping-option.shipping-option').findOne({ medusa_id: shipping_option.medusa_id });
+          const found = await strapi.db.query('api::shipping-option.shipping-option').findOne({
+            where: {
+              medusa_id: shipping_option.medusa_id
+            }
+          });
           if (found) {
             continue;
           }
@@ -75,14 +85,18 @@ module.exports = createCoreService('api::shipping-option.shipping-option', ({ st
             delete shippingOption.profile;
           }
 
-          const found = await strapi.db.query('api::shipping-option.shipping-option').findOne({ medusa_id: shippingOption.medusa_id });
+          const found = await strapi.db.query('api::shipping-option.shipping-option').findOne({
+            where: {
+              medusa_id: shippingOption.medusa_id
+            }
+          });
           if (found) {
-            shippingOptionsStrapiIds.push({ id: found.id });
+            shippingOptionsStrapiIds.push(found.id);
             continue;
           }
 
           const create = await createShippingOptionAfterDelegation(shippingOption);
-          shippingOptionsStrapiIds.push({ id: create });
+          shippingOptionsStrapiIds.push(create);
         }
       }
       return shippingOptionsStrapiIds;

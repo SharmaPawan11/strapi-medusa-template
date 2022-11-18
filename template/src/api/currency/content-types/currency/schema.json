@@ -32,8 +32,10 @@
       "required": true
     },
     "regions": {
-      "via": "currency",
-      "collection": "region"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::region.region",
+      "mappedBy": "currency"
     }
   }
 }
