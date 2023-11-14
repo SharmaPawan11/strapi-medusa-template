@@ -1,39 +1,45 @@
-'use strict';
+"use strict";
 
 /**
  * Read the documentation (https://strapi.io/documentation/developer-docs/latest/development/backend-customization.html#core-services)
  * to customize this service
  */
 
-const {createCoreService} = require('@strapi/strapi').factories;
+const { createCoreService } = require("@strapi/strapi").factories;
 
-module.exports = createCoreService('api::product-tag.product-tag', ({strapi}) => ({
-  async handleManyToManyRelation(product_tags) {
-    const strapiProductTagsIds = [];
+module.exports = createCoreService(
+  "api::product-tag.product-tag",
+  ({ strapi }) => ({
+    async handleManyToManyRelation(product_tags) {
+      const strapiProductTagsIds = [];
 
-    try {
-      for (let product_tag of product_tags) {
-        product_tag.medusa_id = product_tag.id.toString();
-        delete product_tag.id;
+      try {
+        for (let product_tag of product_tags) {
+          product_tag.medusa_id = product_tag.id.toString();
+          delete product_tag.id;
 
-        const found = await strapi.db.query('api::product-tag.product-tag').findOne({
-          where: {
-            medusa_id: product_tag.medusa_id
+          const found = await strapi.db
+            .query("api::product-tag.product-tag")
+            .findOne({
+              where: { medusa_id: product_tag.medusa_id },
+            });
+
+          if (found) {
+            strapiProductTagsIds.push({ id: found.id });
+            continue;
           }
-        })
 
-        if (found) {
-          strapiProductTagsIds.push(found.id);
-          continue;
+          const create = await strapi.entityService.create(
+            "api::product-tag.product-tag",
+            { data: product_tag }
+          );
+          strapiProductTagsIds.push({ id: create.id });
         }
-
-        const create = await strapi.entityService.create('api::product-tag.product-tag', {data: product_tag});
-        strapiProductTagsIds.push(create.id);
+      } catch (e) {
+        console.log(e);
+        throw new Error("Delegated creation failed");
       }
-    } catch (e) {
-      console.log(e);
-      throw new Error('Delegated creation failed');
-    }
-    return strapiProductTagsIds;
-  }
-}));
+      return strapiProductTagsIds;
+    },
+  })
+);

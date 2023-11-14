@@ -1,15 +1,14 @@
-'use strict';
+"use strict";
 
 /**
  * Read the documentation (https://strapi.io/documentation/developer-docs/latest/development/backend-customization.html#core-services)
  * to customize this service
  */
 
-const {createCoreService} = require('@strapi/strapi').factories;
+const { createCoreService } = require("@strapi/strapi").factories;
 
-module.exports = createCoreService('api::country.country', ({strapi}) => ({
+module.exports = createCoreService("api::country.country", ({ strapi }) => ({
   async handleOneToManyRelation(countries, parent) {
-
     const countriesStrapiIds = [];
 
     try {
@@ -18,27 +17,29 @@ module.exports = createCoreService('api::country.country', ({strapi}) => ({
           country.medusa_id = country.id.toString();
           delete country.id;
 
-          if (parent === 'region') {
-            delete country.region_id
+          if (parent === "region") {
+            delete country.region_id;
           }
 
-          const found = await strapi.db.query('api::country.country').findOne({
-            where: {medusa_id: country.medusa_id}
+          const found = await strapi.db.query("api::country.country").findOne({
+            where: { medusa_id: country.medusa_id },
           });
           if (found) {
-            countriesStrapiIds.push(found.id);
+            countriesStrapiIds.push({ id: found.id });
             continue;
           }
 
-          const create = await strapi.entityService.create('api::country.country', {data: country});
-          countriesStrapiIds.push(create.id);
+          const create = await strapi.entityService.create(
+            "api::country.country",
+            { data: country }
+          );
+          countriesStrapiIds.push({ id: create.id });
         }
       }
       return countriesStrapiIds;
     } catch (e) {
       console.log(e);
-      throw new Error('Delegated creation failed');
+      throw new Error("Delegated creation failed");
     }
-
-  }
+  },
 }));
