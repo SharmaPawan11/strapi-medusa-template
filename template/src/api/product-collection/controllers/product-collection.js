@@ -10,6 +10,22 @@ module.exports = createCoreController(
   "api::product-collection.product-collection",
 
   {
+    async findOne(ctx) {
+      try {
+        const { id: medusaId } = ctx.params;
+        const productCollection = await strapi.db
+          .query("api::product-collection.product-collection")
+          .findOne({
+            where: { medusa_id: medusaId },
+          });
+        if (productCollection && productCollection.id) {
+          return (ctx.body = { productCollection });
+        }
+        return ctx.notFound(ctx);
+      } catch (e) {
+        return ctx.internalServerError(ctx);
+      }
+    },
     async create(ctx) {
       try {
         let collectionBody = ctx.request.body;
