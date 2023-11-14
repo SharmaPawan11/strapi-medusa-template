@@ -17,10 +17,12 @@ module.exports = createCoreService(
           delete product_collection.id;
         }
 
-        const found = await strapi
-          .service("api::product-collection.product-collection")
+        const found = await strapi.db
+          .query("api::product-collection.product-collection")
           .findOne({
-            medusa_id: product_collection.medusa_id,
+            where: {
+              medusa_id: product_collection.medusa_id,
+            },
           });
         if (found) {
           return found.id;
